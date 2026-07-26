@@ -1,0 +1,33 @@
+node:
+  image:
+    repository: ghcr.io/openfiat-org/openfiat-node
+    tag: latest
+  replicas: 3
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+  service:
+    peerPort: 30333
+    rpcPort: 9944
+    metricsPort: 9615
+
+ingress:
+  enabled: false
+  host: rpc.openfiat.org
+  tls:
+    enabled: true
+    secretName: openfiat-rpc-tls
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+monitoring:
+  serviceMonitor:
+    enabled: false

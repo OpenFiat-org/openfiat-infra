@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-node
+  labels:
+    app.kubernetes.io/name: openfiat-node
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.node.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openfiat-node
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openfiat-node
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: openfiat-node
+          image: "{{ .Values.node.image.repository }}:{{ .Values.node.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.node.service.peerPort }}
+              name: p2p
+            - containerPort: {{ .Values.node.service.rpcPort }}
+              name: rpc
+            - containerPort: {{ .Values.node.service.metricsPort }}
+              name: metrics
+          resources:
+            {{- toYaml .Values.node.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config

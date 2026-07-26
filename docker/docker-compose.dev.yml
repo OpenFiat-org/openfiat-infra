@@ -1,0 +1,11 @@
+name: openfiat-dev
+
+services:
+  node:
+    build:
+      context: ../../openfiat-core
+      dockerfile: ../openfiat-infra/docker/node.Dockerfile
+    ports:
+      - "30333:30333"
+      - "9944:9944"
+      - "9615:9615"

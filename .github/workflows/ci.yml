@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  docker:
+    name: hadolint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/node.Dockerfile
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/web.Dockerfile
+
+  helm:
+    name: helm lint / template
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - run: helm lint kubernetes/charts/openfiat
+      - run: helm template kubernetes/charts/openfiat > /dev/null
+
+  terraform:
+    name: terraform fmt / validate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [aws, azure, gcp, hetzner, digitalocean, ovh]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform -chdir=terraform/modules/${{ matrix.module }} fmt -check
+      - run: terraform -chdir=terraform/modules/${{ matrix.module }} init -backend=false
+      - run: terraform -chdir=terraform/modules/${{ matrix.module }} validate
+
+  compose-config:
+    name: compose config (docker + monitoring)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f docker/docker-compose.dev.yml config -q
+      - run: docker compose -f monitoring/docker-compose.yml config -q

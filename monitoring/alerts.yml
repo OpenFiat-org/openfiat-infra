@@ -1,0 +1,10 @@
+groups:
+  - name: openfiat-node
+    rules:
+      - alert: NodeDown
+        expr: up{job="openfiat-node"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "OpenFiat node target down"

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: openfiat
+description: Helm chart for OpenFiat node and supporting infrastructure.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

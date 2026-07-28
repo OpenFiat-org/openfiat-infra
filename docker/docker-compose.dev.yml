@@ -1,11 +1,90 @@
+# A real, persistently-running local devnet cluster: one bootstrap node
+# plus two followers, each a genuine `openfiat-node` process with its own
+# identity and RocksDB volume — not an ephemeral per-test-run harness.
+# Node 0 is also `NodeChainMode::RpcConnected` (OFS-4300 §4), pointed at
+# Solana's free public devnet RPC by default; override
+# CLI_SOLANA_RPC_URLS (e.g. in a local, untracked `.env` file) to use a
+# faster private endpoint instead.
+#
+# Bootstrap peers are addressed by static IP, not hostname — this
+# workspace deliberately doesn't enable libp2p's `dns` feature (two
+# unresolved `hickory-proto` CVEs; see openfiat-core/docs/architecture.md
+# decision #3a), so a fixed subnet is the simplest correct way to give
+# each node's `CLI_BOOTSTRAP_PEERS` a real, resolvable address.
+#
+# Usage: docker compose -f docker-compose.dev.yml up
 name: openfiat-dev
 
+x-node-image: &node-image
+  build:
+    context: ../../openfiat-core
+    dockerfile: ../openfiat-infra/docker/node.Dockerfile
+
+networks:
+  openfiat:
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
 services:
-  node:
-    build:
-      context: ../../openfiat-core
-      dockerfile: ../openfiat-infra/docker/node.Dockerfile
+  node0:
+    <<: *node-image
+    hostname: node0
+    networks:
+      openfiat:
+        ipv4_address: 172.28.0.10
     ports:
-      - "30333:30333"
-      - "9944:9944"
-      - "9615:9615"
+      - "8080:8080"
+    volumes:
+      - node0-data:/data
+    environment:
+      CLI_DATA_DIR: /data
+      CLI_HTTP_ADDR: 0.0.0.0:8080
+      CLI_LISTEN_ADDR: /ip4/0.0.0.0/udp/4001/quic-v1
+      CLI_SOLANA_RPC_URLS: ${CLI_SOLANA_RPC_URLS:-https://api.devnet.solana.com}
+      CLI_WALLET_PATH: /data/wallet.json
+
+  node1:
+    <<: *node-image
+    hostname: node1
+    networks:
+      openfiat:
+        ipv4_address: 172.28.0.11
+    ports:
+      - "8081:8080"
+    volumes:
+      - node1-data:/data
+    environment:
+      CLI_DATA_DIR: /data
+      CLI_HTTP_ADDR: 0.0.0.0:8080
+      CLI_LISTEN_ADDR: /ip4/0.0.0.0/udp/4001/quic-v1
+      CLI_BOOTSTRAP_PEERS: /ip4/172.28.0.10/udp/4001/quic-v1
+      CLI_WALLET_PATH: /data/wallet.json
+    depends_on:
+      node0:
+        condition: service_healthy
+
+  node2:
+    <<: *node-image
+    hostname: node2
+    networks:
+      openfiat:
+        ipv4_address: 172.28.0.12
+    ports:
+      - "8082:8080"
+    volumes:
+      - node2-data:/data
+    environment:
+      CLI_DATA_DIR: /data
+      CLI_HTTP_ADDR: 0.0.0.0:8080
+      CLI_LISTEN_ADDR: /ip4/0.0.0.0/udp/4001/quic-v1
+      CLI_BOOTSTRAP_PEERS: /ip4/172.28.0.10/udp/4001/quic-v1
+      CLI_WALLET_PATH: /data/wallet.json
+    depends_on:
+      node0:
+        condition: service_healthy
+
+volumes:
+  node0-data:
+  node1-data:
+  node2-data:

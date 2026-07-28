@@ -17,7 +17,7 @@ node:
 
 ingress:
   enabled: false
-  host: rpc.openfiat.org
+  host: rpc.openfiat.network
   tls:
     enabled: true
     secretName: openfiat-rpc-tls

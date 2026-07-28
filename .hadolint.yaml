@@ -1,0 +1,10 @@
+# hadolint configuration. Disabled only where the rule is wrong for this
+# repo's Dockerfiles, not to silence real defects.
+ignored:
+  # "Pin versions in apt-get install." Both Dockerfiles install packages
+  # from Debian's rolling `bookworm`/`bookworm-slim` base images; pinning
+  # an exact apt version breaks the build the next time that base image
+  # updates its package index, which happens far more often than this
+  # repo pins new base image tags. Package *sources* are already pinned
+  # (FROM rust:1-slim-bookworm, FROM debian:bookworm-slim).
+  - DL3008

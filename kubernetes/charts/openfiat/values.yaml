@@ -11,9 +11,11 @@ node:
       cpu: "2"
       memory: "2Gi"
   service:
-    peerPort: 30333
-    rpcPort: 9944
-    metricsPort: 9615
+    # openfiat-node's real surface (crates/cli's CLI_LISTEN_ADDR/CLI_HTTP_ADDR
+    # defaults): QUIC/P2P on UDP, and one HTTP port for JSON-RPC, WebSocket,
+    # REST, health, and metrics together — there is no separate metrics port.
+    peerPort: 4001
+    httpPort: 8080
 
 ingress:
   enabled: false

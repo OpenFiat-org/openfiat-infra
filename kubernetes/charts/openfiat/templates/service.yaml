@@ -9,7 +9,6 @@ spec:
   ports:
     - name: p2p
       port: {{ .Values.node.service.peerPort }}
-    - name: rpc
-      port: {{ .Values.node.service.rpcPort }}
-    - name: metrics
-      port: {{ .Values.node.service.metricsPort }}
+      protocol: UDP
+    - name: http
+      port: {{ .Values.node.service.httpPort }}

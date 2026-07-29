@@ -10,6 +10,9 @@ rule_files:
   - "alerts.yml"
 
 scrape_configs:
+  # openfiat-node serves GET /metrics on its one HTTP port (CLI_HTTP_ADDR,
+  # default 8080) alongside JSON-RPC/WebSocket/REST/health — there is no
+  # separate metrics port.
   - job_name: "openfiat-node"
     static_configs:
-      - targets: ["host.docker.internal:9615"]
+      - targets: ["host.docker.internal:8080"]

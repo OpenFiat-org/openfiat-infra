@@ -17,7 +17,7 @@ spec:
               service:
                 name: {{ .Release.Name }}-node
                 port:
-                  number: {{ .Values.node.service.rpcPort }}
+                  number: {{ .Values.node.service.httpPort }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts: [{{ .Values.ingress.host }}]

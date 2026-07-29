@@ -22,11 +22,10 @@ spec:
           image: "{{ .Values.node.image.repository }}:{{ .Values.node.image.tag }}"
           ports:
             - containerPort: {{ .Values.node.service.peerPort }}
+              protocol: UDP
               name: p2p
-            - containerPort: {{ .Values.node.service.rpcPort }}
-              name: rpc
-            - containerPort: {{ .Values.node.service.metricsPort }}
-              name: metrics
+            - containerPort: {{ .Values.node.service.httpPort }}
+              name: http
           resources:
             {{- toYaml .Values.node.resources | nindent 12 }}
           envFrom:

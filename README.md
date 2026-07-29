@@ -16,14 +16,15 @@
 
 ## About
 
-`openfiat-infra` is part of the [OpenFiat](https://github.com/OpenFiat-org)
-ecosystem — an open, decentralized peer-to-peer protocol for exchanging
-stablecoins for local fiat currency. Solana secures asset settlement through
-audited smart contracts; OpenFiat coordinates the peer-to-peer marketplace
-layer (discovery, advertisements, reputation, governance, notifications, and
-more) without centralized infrastructure.
-
-This repository (Infrastructure) — docker images, kubernetes helm charts, terraform modules, and the monitoring stack for openfiat infrastructure.
+`openfiat-infra` packages deployment surface for one real binary,
+`openfiat-node` (built in [openfiat-core](https://github.com/OpenFiat-org/openfiat-core)),
+across every path from a laptop to a fleet: a Dockerfile, a real
+persistent 3-node local cluster, a Helm chart, six cloud Terraform
+modules, and the monitoring stack that watches all of them. It carries no
+protocol logic of its own — see [`docs/architecture.md`](docs/architecture.md)
+for how the pieces fit together, including the node's actual two-port
+surface (UDP 4001 for gossip, TCP 8080 for everything else), which every
+config file here is written against.
 
 For the full protocol motivation and design, see the
 [whitepaper](https://github.com/OpenFiat-org/openfiat-specs) and the
@@ -60,12 +61,11 @@ helm template kubernetes/charts/openfiat
 
 ## Development
 
-Docker/Helm/Terraform binaries are required for full local iteration; none
-were available in the environment that generated this scaffold, so syntax
-was hand-verified (YAML/TOML parsing) rather than tool-verified. The CI
-workflow (`hadolint`, `helm lint`, `terraform validate`) is the source of
-truth — treat a green CI run as the real verification gate before relying on
-any file here.
+Docker, Helm, and Terraform are required for local iteration. CI runs
+`hadolint` against both Dockerfiles, `helm lint`/`helm template` against
+the chart, and `terraform validate` against every provider module on
+every push — a green CI run is the real verification gate for changes
+here, in addition to whatever you run locally.
 
 
 ## Testing

@@ -9,14 +9,14 @@ protocol logic itself.
 flowchart LR
     subgraph Node["openfiat-node (one binary, two ports)"]
         P2P["UDP 4001 - libp2p/QUIC gossip"]
-        HTTP["TCP 8080 - JSON-RPC, WebSocket, REST, /health, /metrics"]
+        HTTP["TCP 7080 - JSON-RPC, WebSocket, REST, /health, /metrics"]
     end
     Docker["docker/node.Dockerfile"] --> Node
     Compose["docker/docker-compose.dev.yml (node0/node1/node2)"] --> Node
     Helm["kubernetes/charts/openfiat"] --> Node
     TF["terraform/modules/* (aws/azure/gcp/hetzner/digitalocean/ovh)"] --> Host[VM or host running the container]
     Host --> Node
-    Prom["monitoring/prometheus.yml"] -->|scrapes :8080/metrics| Node
+    Prom["monitoring/prometheus.yml"] -->|scrapes :7080/metrics| Node
 ```
 
 ## Components
@@ -51,7 +51,7 @@ defaults in `openfiat-core`):
 | Port | Protocol | Carries |
 |---|---|---|
 | 4001 | UDP | libp2p/QUIC gossip (peer-to-peer) |
-| 8080 | TCP | JSON-RPC (`POST /rpc`), WebSocket (`GET /ws`), REST, `GET /health`, `GET /metrics` |
+| 7080 | TCP | JSON-RPC (`POST /rpc`), WebSocket (`GET /ws`), REST, `GET /health`, `GET /metrics` |
 
 There is no separate metrics or RPC port — every HTTP surface is one axum
 router. Config is entirely `CLI_*` environment variables (no config file,

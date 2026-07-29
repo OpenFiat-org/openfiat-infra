@@ -4,8 +4,8 @@
 
 ```bash
 docker build -f docker/node.Dockerfile -t openfiat-node:local ../openfiat-core
-docker run -p 4001:4001/udp -p 8080:8080/tcp openfiat-node:local
-curl -s http://localhost:8080/health
+docker run -p 4001:4001/udp -p 7080:7080/tcp openfiat-node:local
+curl -s http://localhost:7080/health
 ```
 
 ## Run a local 3-node cluster
@@ -17,7 +17,7 @@ docker compose -f docker-compose.dev.yml up
 
 Brings up `node0` (bootstrap, `RpcConnected` against Solana devnet by
 default), `node1`, and `node2` (followers). RPC/health/metrics are
-reachable at `localhost:8080`/`:8081`/`:8082`. Full details, including how
+reachable at `localhost:7080`/`:7081`/`:7082`. Full details, including how
 to point `node0` at a private RPC endpoint, are in `docker/README.md`.
 
 ## Render the Helm chart locally

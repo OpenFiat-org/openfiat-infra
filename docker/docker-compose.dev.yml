@@ -34,12 +34,12 @@ services:
       openfiat:
         ipv4_address: 172.28.0.10
     ports:
-      - "8080:8080"
+      - "7080:7080"
     volumes:
       - node0-data:/data
     environment:
       CLI_DATA_DIR: /data
-      CLI_HTTP_ADDR: 0.0.0.0:8080
+      CLI_HTTP_ADDR: 0.0.0.0:7080
       CLI_LISTEN_ADDR: /ip4/0.0.0.0/udp/4001/quic-v1
       CLI_SOLANA_RPC_URLS: ${CLI_SOLANA_RPC_URLS:-https://api.devnet.solana.com}
       CLI_WALLET_PATH: /data/wallet.json
@@ -51,12 +51,12 @@ services:
       openfiat:
         ipv4_address: 172.28.0.11
     ports:
-      - "8081:8080"
+      - "7081:7080"
     volumes:
       - node1-data:/data
     environment:
       CLI_DATA_DIR: /data
-      CLI_HTTP_ADDR: 0.0.0.0:8080
+      CLI_HTTP_ADDR: 0.0.0.0:7080
       CLI_LISTEN_ADDR: /ip4/0.0.0.0/udp/4001/quic-v1
       CLI_BOOTSTRAP_PEERS: /ip4/172.28.0.10/udp/4001/quic-v1
       CLI_WALLET_PATH: /data/wallet.json
@@ -71,12 +71,12 @@ services:
       openfiat:
         ipv4_address: 172.28.0.12
     ports:
-      - "8082:8080"
+      - "7082:7080"
     volumes:
       - node2-data:/data
     environment:
       CLI_DATA_DIR: /data
-      CLI_HTTP_ADDR: 0.0.0.0:8080
+      CLI_HTTP_ADDR: 0.0.0.0:7080
       CLI_LISTEN_ADDR: /ip4/0.0.0.0/udp/4001/quic-v1
       CLI_BOOTSTRAP_PEERS: /ip4/172.28.0.10/udp/4001/quic-v1
       CLI_WALLET_PATH: /data/wallet.json

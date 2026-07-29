@@ -22,7 +22,7 @@ WORKDIR /data
 # CLI_HTTP_ADDR/CLI_LISTEN_ADDR defaults) — not the Substrate-convention
 # ports (30333/9944/9615) this line previously carried over from a
 # different reference project, for a binary that was never real.
-EXPOSE 8080/tcp 4001/udp
+EXPOSE 7080/tcp 4001/udp
 HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=6 \
-    CMD curl -sf http://127.0.0.1:8080/health || exit 1
+    CMD curl -sf http://127.0.0.1:7080/health || exit 1
 ENTRYPOINT ["/usr/local/bin/openfiat-node"]

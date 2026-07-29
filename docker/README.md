@@ -21,8 +21,8 @@ its own named volume (`node0-data`/`node1-data`/`node2-data`) for real
 RocksDB persistence across restarts, and its own wallet — a fresh
 identity is generated and saved into that volume on first run.
 
-RPC is reachable on the host at `localhost:8080` (node0), `:8081`
-(node1), `:8082` (node2); gossip stays internal to the compose network.
+RPC is reachable on the host at `localhost:7080` (node0), `:7081`
+(node1), `:7082` (node2); gossip stays internal to the compose network.
 
 `node0` defaults to Solana's free public devnet RPC
 (`https://api.devnet.solana.com`). To use a faster/private endpoint

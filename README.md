@@ -23,7 +23,7 @@ persistent 3-node local cluster, a Helm chart, six cloud Terraform
 modules, and the monitoring stack that watches all of them. It carries no
 protocol logic of its own — see [`docs/architecture.md`](docs/architecture.md)
 for how the pieces fit together, including the node's actual two-port
-surface (UDP 4001 for gossip, TCP 8080 for everything else), which every
+surface (UDP 4001 for gossip, TCP 7080 for everything else), which every
 config file here is written against.
 
 For the full protocol motivation and design, see the

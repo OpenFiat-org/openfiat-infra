@@ -15,7 +15,7 @@ node:
     # defaults): QUIC/P2P on UDP, and one HTTP port for JSON-RPC, WebSocket,
     # REST, health, and metrics together — there is no separate metrics port.
     peerPort: 4001
-    httpPort: 8080
+    httpPort: 7080
 
 ingress:
   enabled: false

@@ -90,3 +90,10 @@ See [ROADMAP.md](ROADMAP.md) for current priorities and
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
+
+## Ports
+
+Every port this project binds — nodes, explorer services and dev web apps —
+is listed in [docs/ports.md](docs/ports.md), along with where each default
+lives in code. Add a service's port there in the same commit that introduces
+it.

@@ -23,14 +23,19 @@ ExecStart=/usr/local/bin/openfiat-node \
     --rpc-bind-address 0.0.0.0:7080 \
     --gossip-bind-address /ip4/0.0.0.0/udp/4001/quic-v1 \
     --solana-rpc-url https://api.devnet.solana.com \
-    --ipfs-api-url http://127.0.0.1:5001 \
     --entrypoint /ip4/84.32.223.111/udp/4001/quic-v1/p2p/12D3KooWK9hQ7TwbfvFiaAxUbRFCkdhS7iEpAJDnewNL1anyREQ1
 
-# `--ipfs-api-url` points at the `ipfs.service` unit beside this one. It is
-# what makes this node pin the content protocol records reference and able
-# to answer a peer's retrievability challenge, which earns the full reward
-# share (OFS-4100 §9.2). Drop the flag and the node still runs, stores no
-# content, and earns the reduced share.
+# There is no `--ipfs-api-url` here any more, and no `ipfs.service` beside
+# this one. The node holds the content protocol records reference and
+# answers bitswap for it in process, over the same libp2p identity this
+# unit already runs — which is what earns the full reward share
+# (OFS-4100 §9.2). That retired a second daemon, a second peer identity,
+# and an unauthenticated `/api/v0` control port whose only protection was
+# being bound to loopback.
+#
+# It is on by default. `--no-content-serving` turns it off and drops this
+# node to the reduced share; add it only if the disk genuinely is not
+# there.
 
 # Restart on any exit, including a clean one. A node that stops is not
 # serving the network, and there is no exit this binary makes that should

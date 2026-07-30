@@ -1,0 +1,35 @@
+[Unit]
+Description=OpenFiat devnet FX oracle (one publish run)
+Documentation=https://github.com/OpenFiat-org/openfiat-core/blob/main/crates/cli/examples/devnet_oracle.rs
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=openfiat
+Group=openfiat
+# Built from openfiat-core with:
+#     cargo build --release -p openfiat-cli --example devnet_oracle
+# and installed alongside the node binary.
+ExecStart=/usr/local/bin/openfiat-devnet-oracle \
+    --node http://127.0.0.1:7080 \
+    --identity /var/lib/openfiat/devnet-oracle.json
+
+# The identity file is this oracle's signing key. Every record the network
+# accepts under this provider is signed with it, so a leak lets anyone
+# publish rates the cluster will believe. It lives outside any repository
+# and is created on first run — 0600, owned by the service user.
+
+# Failure here must stay loud. The publisher refuses to publish when it
+# cannot reach its rate sources or when the fiat source has stalled, and
+# that refusal is the feature: a devnet with no oracle prices nothing,
+# which is correct, while a devnet with an invented oracle prices
+# everything wrong and looks healthy doing it.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/openfiat
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openfiat-devnet-oracle

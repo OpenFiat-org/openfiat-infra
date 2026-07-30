@@ -1,0 +1,71 @@
+[Unit]
+Description=OpenFiat full node
+Documentation=https://github.com/OpenFiat-org/openfiat-core
+# Wants= rather than Requires=: the node should still come up and serve
+# cached state if the network is briefly unavailable at boot, rather than
+# refusing to start and needing a human.
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=openfiat
+Group=openfiat
+EnvironmentFile=/etc/openfiat/node.env
+ExecStart=/usr/local/bin/openfiat-node
+
+# Restart on any exit, including a clean one. A node that stops is not
+# serving the network, and there is no exit this binary makes that should
+# leave the machine quietly without a node.
+Restart=always
+RestartSec=5
+
+# Give RocksDB time to flush and close cleanly. A hard kill mid-compaction
+# is how a data directory becomes one that needs repair on next boot.
+TimeoutStopSec=60
+KillSignal=SIGTERM
+
+# --- Hardening -------------------------------------------------------
+# The node needs exactly one writable path, one keypair, and outbound
+# network. Everything else is denied so that a compromise of the process
+# cannot reach the rest of the machine — and, specifically, cannot read
+# other users' keys.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=false
+# ^ false deliberately: the Rust binary is AOT-compiled and does not JIT,
+#   but some TLS/crypto backends map W+X pages during init. Turning it on
+#   without testing that is how a node fails to start at 3am.
+ReadWritePaths=/var/lib/openfiat
+# AF_NETLINK is required, not optional: binding a wildcard address makes
+# libp2p enumerate this host's interfaces, and interface enumeration on
+# Linux goes over a netlink socket. Without it the QUIC listener fails with
+# a bare "Internal" error and the gossip actor panics — while the HTTP
+# thread survives, so systemd still reports the unit active and the node
+# looks healthy from the outside while serving nothing.
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# RocksDB opens many files; the default 1024 is low enough to bite under
+# compaction with several column families.
+LimitNOFILE=65536
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openfiat-node
+
+[Install]
+WantedBy=multi-user.target

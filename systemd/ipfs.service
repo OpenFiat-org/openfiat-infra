@@ -1,0 +1,30 @@
+[Unit]
+Description=IPFS daemon (content pinning for openfiat-node)
+Documentation=https://docs.ipfs.tech
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+User=ipfs
+Group=ipfs
+Environment=IPFS_PATH=/var/lib/ipfs/.ipfs
+ExecStart=/usr/local/bin/ipfs daemon --migrate=true
+Restart=always
+RestartSec=5
+# The API is bound to loopback in the node's own config. It is an
+# unauthenticated control surface — anyone who can reach it can pin,
+# unpin, and read anything this daemon holds — so it must never be
+# exposed beyond the host.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ipfs
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ipfs
+
+[Install]
+WantedBy=multi-user.target

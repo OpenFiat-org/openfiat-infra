@@ -22,7 +22,14 @@ ExecStart=/usr/local/bin/openfiat-node \
     --identity /var/lib/openfiat/wallet.json \
     --rpc-bind-address 0.0.0.0:7080 \
     --gossip-bind-address /ip4/0.0.0.0/udp/4001/quic-v1 \
-    --solana-rpc-url https://api.devnet.solana.com
+    --solana-rpc-url https://api.devnet.solana.com \
+    --ipfs-api-url http://127.0.0.1:5001
+
+# `--ipfs-api-url` points at the `ipfs.service` unit beside this one. It is
+# what makes this node pin the content protocol records reference and able
+# to answer a peer's retrievability challenge, which earns the full reward
+# share (OFS-4100 §9.2). Drop the flag and the node still runs, stores no
+# content, and earns the reduced share.
 
 # Restart on any exit, including a clean one. A node that stops is not
 # serving the network, and there is no exit this binary makes that should
